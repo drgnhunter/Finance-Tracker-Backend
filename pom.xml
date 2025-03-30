@@ -65,7 +65,14 @@
 			<artifactId>mysql-connector-java</artifactId>
 			<version>8.0.29</version> <!-- Specify a valid version here -->
 		</dependency>
-		
+
+		<!-- https://mvnrepository.com/artifact/org.json/json -->
+		<dependency>
+			<groupId>org.json</groupId>
+			<artifactId>json</artifactId>
+			<version>20250107</version>
+		</dependency>
+				
 	</dependencies>
 
 	<build>
