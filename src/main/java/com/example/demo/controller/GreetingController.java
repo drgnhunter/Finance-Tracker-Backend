@@ -11,7 +11,14 @@ import com.example.demo.controller.UserController;
 
 import com.example.demo.model.User;
 import com.example.demo.repository.UserRepository;
+
+import jakarta.servlet.http.Cookie;  // Correct import for Jakarta Cookie
+import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpServletRequest;  // For Spring Boot 2.4+ and Jakarta EE
+
+
 import com.example.demo.JwtTokenUtil;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 public class GreetingController {
@@ -31,7 +38,7 @@ public class GreetingController {
     }
 
     @RequestMapping(value = "/signin", method = RequestMethod.POST)
-    public ResponseEntity<String> userSignIn(@RequestBody LoginRequest loginRequest) {
+    public ResponseEntity<String> userSignIn(@RequestBody LoginRequest loginRequest, HttpServletResponse response) {
         try {
             String username = loginRequest.getUsername();
             String password = loginRequest.getPassword();
@@ -43,8 +50,8 @@ public class GreetingController {
                 // For demonstration purposes, a fake JWT is being returned
                 // If authentication is successful, generate the token
                 String token = JwtTokenUtil.generateToken(username);
-                
-                 // Create a JSON response containing the token
+                setJwtCookie(response,token);
+                // Create a JSON response containing the token
                 return ResponseEntity.ok().body("{\"token\":\"" + token + "\"}");
             } else {
                 return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid credentials");
@@ -54,7 +61,47 @@ public class GreetingController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("An error occurred");
         }
     }
+    @GetMapping("/protected")
+    public ResponseEntity<?> protectedRoute(HttpServletRequest request) {
+        // Retrieve JWT from HttpOnly cookie
+        String token = null;
+        Cookie[] cookies = request.getCookies();
 
+        if (cookies != null) {
+            for (Cookie cookie : cookies) {
+                if (cookie.getName().equals("jwt")) {
+                    token = cookie.getValue();
+                    break;
+                }
+            }
+        }
+
+        if (token == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("No token found");
+        }
+
+        // Validate the token (e.g., using JwtTokenUtil)
+        try {
+            String username = JwtTokenUtil.validateTokenAndGetUsername(token); // Validate token and extract username
+            return ResponseEntity.ok("Welcome, " + username);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid or expired token");
+        }
+    }
+
+    private void setJwtCookie(HttpServletResponse response, String token) {
+        Cookie cookie = new Cookie("jwt", token);
+        cookie.setHttpOnly(true);  // Makes the cookie inaccessible to JavaScript
+        cookie.setSecure(true);    // Ensures the cookie is sent over HTTPS
+        cookie.setPath("/");       // Makes the cookie available for the entire domain
+        cookie.setMaxAge(60 * 60 * 24);  // Set expiration time (e.g., 1 day)
+    
+        // Manually set the SameSite attribute (workaround for older versions)
+        response.addCookie(cookie);
+        
+        // Manually add the SameSite attribute via the "Set-Cookie" header
+        response.setHeader("Set-Cookie", "jwt=" + token + "; HttpOnly; Secure; Path=/; Max-Age=86400; SameSite=Strict");
+    }
 
     // @RequestMapping(value = "/signin", method = RequestMethod.POST)
     // public int userSignIn() {

@@ -54,4 +54,15 @@ public class JwtTokenUtil {
     public static boolean validateToken(String token, String username) {
         return (username.equals(extractUsername(token)) && !isTokenExpired(token));
     }
+
+    public static String validateTokenAndGetUsername(String token) {
+        // Validate if the token is valid
+        if (isTokenExpired(token)) {
+            throw new RuntimeException("Token has expired");
+        }
+    
+        // Extract the username from the token if it's valid
+        return extractUsername(token);
+    }
+    
 }
