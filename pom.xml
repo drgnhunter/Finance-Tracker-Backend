@@ -72,7 +72,36 @@
 			<artifactId>json</artifactId>
 			<version>20250107</version>
 		</dependency>
-				
+
+		<!-- https://mvnrepository.com/artifact/org.jboss.errai/errai-security-keycloak -->
+		<!-- https://mvnrepository.com/artifact/org.keycloak/keycloak-core -->
+		<!-- https://mvnrepository.com/artifact/org.keycloak/keycloak-spring-boot-starter -->
+		<dependency>
+			<groupId>org.keycloak</groupId>
+			<artifactId>keycloak-spring-boot-starter</artifactId>
+			<version>25.0.3</version>
+		</dependency>
+		<!-- https://mvnrepository.com/artifact/org.keycloak/keycloak-spring-security-adapter -->
+		<dependency>
+			<groupId>org.keycloak</groupId>
+			<artifactId>keycloak-spring-security-adapter</artifactId>
+			<version>25.0.3</version>
+		</dependency>
+		<dependency>
+    <groupId>io.jsonwebtoken</groupId>
+    <artifactId>jjwt-api</artifactId>
+    <version>0.11.5</version>
+</dependency>
+<dependency>
+    <groupId>io.jsonwebtoken</groupId>
+    <artifactId>jjwt-impl</artifactId>
+    <version>0.11.5</version>
+</dependency>
+<dependency>
+    <groupId>io.jsonwebtoken</groupId>
+    <artifactId>jjwt-orgjson</artifactId>
+    <version>0.11.5</version>
+</dependency>
 	</dependencies>
 
 	<build>
