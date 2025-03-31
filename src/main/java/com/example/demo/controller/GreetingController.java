@@ -44,7 +44,8 @@ public class GreetingController {
                 // If authentication is successful, generate the token
                 String token = JwtTokenUtil.generateToken(username);
                 
-                return ResponseEntity.ok(token);
+                 // Create a JSON response containing the token
+                return ResponseEntity.ok().body("{\"token\":\"" + token + "\"}");
             } else {
                 return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid credentials");
             }
